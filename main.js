@@ -1,14 +1,13 @@
 enchant();
 
-window.onload = function() {
+window.onload = function () {
     game = new Game(320, 320);
     game.fps = 24;
-    game.preload(['chara1.gif','icon0.gif','espaço1.png']);
+    game.preload(['chara1.gif', 'icon0.gif', 'espaço1.png']);
 
-    
-
-    game.onload = function() {
+    game.onload = function () {
         bear = new Sprite(32, 32);
+        scoreLabel = new Label('');
         bear.x = 0;
         bear.y = 240;
         bear.width = 32;
@@ -22,18 +21,18 @@ window.onload = function() {
 
         // Função para mudar o frame do sprite
         function changeFrame() {
-        // Alterando o frame do sprite para o próximo frame
-        bear.frame++;
+            // Alterando o frame do sprite para o próximo frame
+            bear.frame++;
 
-        // Verificando se o frame atual ultrapassou o número total de frames
-        // Se sim, voltamos ao primeiro frame
-        if (bear.frame >= 7) {
-        bear.frame = 5;
-    }
-}
+            // Verificando se o frame atual ultrapassou o número total de frames
+            // Se sim, voltamos ao primeiro frame
+            if (bear.frame >= 7) {
+                bear.frame = 5;
+            }
+        }
 
-// Chamando a função para mudar o frame a cada segundo (1000 milissegundos)
-setInterval(changeFrame, 50);
+        // Chamando a função para mudar o frame a cada segundo (1000 milissegundos)
+        setInterval(changeFrame, 50);
 
 
 
@@ -41,21 +40,21 @@ setInterval(changeFrame, 50);
         background.x = background.y = 0;
         background.image = game.assets['espaço1.png']
 
-        game.rootScene.addEventListener('touchstart', function(e){
+        game.rootScene.addEventListener('touchstart', function (e) {
             bear.x = e.localX
         });
 
-        game.rootScene.addEventListener('touchmove', function(e){
+        game.rootScene.addEventListener('touchmove', function (e) {
             bear.x = e.localX
         });
 
         game.score = 0;
 
-        game.rootScene.addEventListener('enterframe',function(){
-            if(game.frame % 6 == 0){
+        game.rootScene.addEventListener('enterframe', function () {
+            if (game.frame % 6 == 0) {
                 addBanana();
             }
-            if(game.rootScene.age > game.fps * 20){
+            if (game.rootScene.age > game.fps * 20) {
                 game.end(game.score, game.score + " bananas capturadas!");
             }
         });
@@ -67,7 +66,13 @@ setInterval(changeFrame, 50);
     game.start();
 }
 
-function addBanana(pos){
+function addBanana(pos) {
+    scoreLabel.x = 10;
+    scoreLabel.y = 10;
+    scoreLabel.color = 'white';
+    scoreLabel.font = '20px Arial';
+    game.rootScene.addChild(scoreLabel);
+
     var banana = new Sprite(16, 16);
     banana.x = rand(320);
     banana.y = 0;
@@ -75,17 +80,18 @@ function addBanana(pos){
 
     banana.frame = 24;
 
-    banana.addEventListener('enterframe', function(e) {
-        if(this.intersect(bear)){
+    banana.addEventListener('enterframe', function (e) {
+        if (this.intersect(bear)) {
             game.rootScene.removeChild(this);
-            game.score ++;
-        }else{
+            game.score++;
+            scoreLabel.text = 'Pontos: ' + (game.score += 1);
+        } else {
             this.y += 3;
         }
     });
     game.rootScene.addChild(banana);
 }
 
-function rand(num){
+function rand(num) {
     return Math.floor(Math.random() * num);
 }
